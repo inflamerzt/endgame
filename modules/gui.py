@@ -125,23 +125,22 @@ def rungui():
     def get_data():
         global lasttext
         if pr:
+            dparam = dict()
             for item in pr:
-                dparam = dict()
                 dparam[item[0].get()] = item[1].get()
         else:
             dparam = None
 
         if bd:
+            dbody = dict()
             for item in bd:
-                dbody = dict()
                 dbody[item[0].get()] = item[1].get()
-            dbody = dbody
         else:
             dbody = None
 
         if hd:
+            dheaders = dict()
             for item in hd:
-                dheaders = dict()
                 dheaders[item[0].get()] = item[1].get()
                 dheaders = (dheaders)
         else:
