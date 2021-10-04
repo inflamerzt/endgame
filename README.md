@@ -21,10 +21,6 @@ To install in macOS:
 ```python
 https://www.python.org/downloads/mac-osx/ - the official site where you can download.
 ```
-Framework Tkinter installation:
-```python
-$ pip3 install tkinter
-```
 
 YAML extension instalation:
 ```python
