@@ -1,4 +1,4 @@
-# ENDGAME Python REST API client - Dark Side
+# ENDGAME Python REST API client
 
 ## DESCRIPTION:
 
