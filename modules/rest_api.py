@@ -95,8 +95,8 @@ def request(url, **params):
             log.inf(f"{response.status_code} {method.upper()} {url}")
             hist.h_save(method=method.upper(),
                         url=url,
-                        params=rparams,
-                        rbody=rdata,
+                        params=str(rparams),
+                        rbody=str(rdata),
                         status=response.status_code,
                         response=response.text)
             return {
