@@ -1,3 +1,5 @@
+import tkinter
+import tkinter.messagebox
 from tkinter.constants import DISABLED, NORMAL, NSEW
 import yaml
 import simplejson as json
@@ -55,9 +57,14 @@ def rungui():
 
             build_viewer(True)
             # raw json yaml tree/table
-            data = yaml.safe_load(lasttext)
-            view(data, check(data), "name", viewer)
-            pass
+            try:
+                data = yaml.safe_load(lasttext)
+                view(data, check(data), "name", viewer)
+            except:
+                tkinter.messagebox.showerror('Treeview error',
+                                             'Unable create tree with recieved data!')
+            data = ""
+
         else:
             build_viewer(False)
             # textmode
@@ -69,11 +76,22 @@ def rungui():
                 vdata = pprint.pformat(lasttext, sort_dicts=False)
             elif vmode == 1:
                 # json
-                vdata = pprint.pformat(json.loads(lasttext), sort_dicts=False)
+                try:
+                    vdata = pprint.pformat(
+                        json.loads(lasttext), sort_dicts=False)
+                except:
+                    tkinter.messagebox.showerror('json error',
+                                                 'Unable to parse this data with json!')
+                    vdata = ""
             elif vmode == 2:
                 # yaml
-                vdata = pprint.pformat(
-                    yaml.safe_load(lasttext), sort_dicts=False)
+                try:
+                    vdata = pprint.pformat(
+                        yaml.safe_load(lasttext), sort_dicts=False)
+                except:
+                    tkinter.messagebox.showerror('Yaml error',
+                                                 'Unable to parse this data with YAML!')
+                    vdata = ""
             viewer.insert("1.0", vdata)
             viewer.config(state=DISABLED)
 
@@ -98,8 +116,9 @@ def rungui():
             item = hviewer.item(selected_item)
             # list
             record = item["values"]
-            lasttext = record[6]
+            lasttext = record[7]
             viewdata()
+            # TODO: Fill other fields from history
             tabControl.select(tab1)
         """
         newWindow = tk.Toplevel(root)
@@ -388,7 +407,7 @@ def rungui():
         histoperations, text="Clear", command=lambda: clear_history()
     ).grid(column=1, row=0, sticky="w")
 
-    columns = ("#1", "#2", "#3", "#4", "#5", "#6", "#7")
+    columns = ("#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8")
 
     hviewer = ttk.Treeview(tab2, show="headings", columns=columns)
     hviewer.rowconfigure(0, weight=1)
@@ -405,16 +424,23 @@ def rungui():
     hviewer.column("#4", anchor="w")
     hviewer.heading("#5", text="request body")
     hviewer.column("#5", anchor="w")
-    hviewer.heading("#6", text="Status")
-    hviewer.column("#6", anchor="w", width=40)
-    hviewer.heading("#7", text="")
-    hviewer.column("#7", width=0)
+    hviewer.heading("#6", text="headers")
+    hviewer.column("#6", anchor="w")
+    hviewer.heading("#7", text="Status")
+    hviewer.column("#7", anchor="w", width=40)
+    hviewer.heading("#8", text="")
+    hviewer.column("#8", width=0, stretch="false")
 
     hviewer.bind("<<TreeviewSelect>>", item_selected)
 
-    # add a scrollbar
+    # add a scrollbars
     hscrollbar = ttk.Scrollbar(tab2, orient=tk.VERTICAL, command=hviewer.yview)
     hviewer.configure(yscroll=hscrollbar.set)
     hscrollbar.grid(row=1, column=1, sticky="ens")
+
+    vscrollbar = ttk.Scrollbar(
+        tab2, orient=tk.HORIZONTAL, command=hviewer.xview)
+    hviewer.configure(xscroll=vscrollbar.set)
+    vscrollbar.grid(row=2, column=0, sticky="wes")
 
     root.mainloop()

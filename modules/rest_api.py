@@ -104,12 +104,14 @@ def request(url, **params):
                 return {"status": "No method is defined"}
             response.raise_for_status()
             # Code here will only run if the request is successful
+            response.encoding = 'utf-8'
             log.inf(f"{response.status_code} {method.upper()} {url}")
             hist.h_save(
                 method=method.upper(),
                 url=url,
                 params=str(rparams),
                 rbody=str(rdata),
+                rheader=str(rheaders),
                 status=response.status_code,
                 response=response.text,
             )

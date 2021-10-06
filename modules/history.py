@@ -18,7 +18,7 @@ def h_init():
         return
     cursor = db.cursor()
     cursor.execute(
-        f"""CREATE TABLE IF NOT EXISTS {tablename}(id INTEGER PRIMARY KEY AUTOINCREMENT,method TEXT,url TEXT,params TEXT,rbody TEXT,status INTEGER,response TEXT)"""
+        f"""CREATE TABLE IF NOT EXISTS {tablename}(id INTEGER PRIMARY KEY AUTOINCREMENT,method TEXT,url TEXT,params TEXT,rbody TEXT,rheader TEXT,status INTEGER,response TEXT)"""
     )
 
     db.commit()
@@ -52,6 +52,11 @@ def h_save(**data):
         drbody = data["rbody"]
     else:
         drbody = ""
+    if "rheader" in data.keys():
+        drheader = data["rheader"]
+    else:
+        drheader = ""
+
     if "status" in data.keys():
         dstatus = data["status"]
     else:
@@ -61,8 +66,9 @@ def h_save(**data):
     else:
         dresponse = ""
 
-    sql = f"""INSERT INTO {tablename} (method,url,params,rbody,status,response) VALUES(?, ?, ?, ?, ?, ?)"""
-    cursor.execute(sql, (dmethod, durl, dparams, drbody, dstatus, dresponse))
+    sql = f"""INSERT INTO {tablename} (method,url,params,rbody,rheader,status,response) VALUES(?, ?, ?, ?, ?, ?, ?)"""
+    cursor.execute(sql, (dmethod, durl, dparams, drbody,
+                   drheader, dstatus, dresponse))
     db.commit()
     db.close()
 

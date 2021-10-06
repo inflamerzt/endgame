@@ -120,12 +120,13 @@ if __name__ == "__main__":
                     items = dict()
                     if not int(command):
                         print(
-                            "{:<4} {:<8} {:<30} {:<30} {:<30} {:<8}".format(
+                            "{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}".format(
                                 "..",
                                 "Method",
                                 "URL",
                                 "Params",
                                 "Request body",
+                                "Request headers",
                                 "status",
                             )
                         )
@@ -136,12 +137,12 @@ if __name__ == "__main__":
                                 if not i[num]:
                                     i[num] = ""
                                 elif isinstance(i[num], str):
-                                    i[num] = i[num][:28]
+                                    i[num] = i[num][:25]
 
                             items[i[0]] = i[1:]
                             print(
-                                "{:<4} {:<8} {:<30} {:<30} {:<30} {:<8}".format(
-                                    i[0], i[1], i[2], i[3], i[4], i[5]
+                                "{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}".format(
+                                    i[0], i[1], i[2], i[3], i[4], i[5], i[6]
                                 )
                             )
 
@@ -159,7 +160,9 @@ if __name__ == "__main__":
                         print("{:<20} {:<100}".format("Params:", items[c][2]))
                         print("{:<20} {:<100}".format(
                             "Request body:", items[c][3]))
-                        print("{:<20} {:<100}".format("Status:", items[c][4]))
+                        print("{:<20} {:<100}".format(
+                            "Request headers:", items[c][4]))
+                        print("{:<20} {:<100}".format("Status:", items[c][5]))
                         print("=" * 100)
                         print("---Response--")
                         print(items[c][5])
@@ -218,9 +221,7 @@ if __name__ == "__main__":
             if isinstance(status, int):
                 # http request
                 print(
-                    f"---Got response {result['status']} \
-                    {HTTPStatus(result['status']).phrase} in \
-                        {result['rtime']} seconds--"
+                    f"---Got response {result['status']} {HTTPStatus(result['status']).phrase} in {result['rtime']} seconds--"
                 )
                 if result["status"] == 200:
                     pdata = None
