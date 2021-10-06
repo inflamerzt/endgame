@@ -116,7 +116,10 @@ if __name__ == "__main__":
 
             else:
                 # show history
-                histitems = history.h_load()
+
+                #TODO : MySQL history
+                histitems = list(reversed(history.h_load(
+                    0, 0, 10)))  # all columns 10 last items (direct order)
                 command = 0
                 while True:
                     # infinite loop

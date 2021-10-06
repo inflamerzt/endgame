@@ -75,7 +75,7 @@ def h_save(**data):
     db.close()
 
 
-def h_load(columns=False, id=False):
+def h_load(columns=False, id=False, cnt=False):
     global dbname
     global tablename
     try:
@@ -101,6 +101,9 @@ def h_load(columns=False, id=False):
         query = f'SELECT * FROM {tablename}'
 
     if id: query += f' WHERE id = {id}'
+    if cnt: query += f' ORDER BY id DESC LIMIT {cnt}'
+    if __name__ == '__main__': print(query)
+
     cursor.execute(query)
     data = cursor.fetchall()
     db.close()
@@ -128,4 +131,7 @@ if __name__ == '__main__':
         h_load(('id', 'method', 'url', 'params', 'rbody', 'rheader', 'status',
                 'response'), 1))
 
-    print(h_load())
+    #print(h_load(0, 0, 1))
+
+    for string in reversed(h_load(('id', 'method', 'url', 'status'), 0, 2)):
+        print(string)
