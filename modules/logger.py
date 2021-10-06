@@ -25,7 +25,7 @@ def loglevel(level):
 def init():
     pid = os.getpid()
     logging.basicConfig(
-        filename='endgame.log',
+        filename="endgame.log",
         encoding="utf-8",
-        format=f'%(asctime)s -=ENDGAME=- (PID:{pid}) %(levelname)s: %(message)s'
+        format=f"%(asctime)s -=ENDGAME=- (PID:{pid}) %(levelname)s: %(message)s",
     )

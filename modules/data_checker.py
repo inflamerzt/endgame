@@ -12,9 +12,7 @@ def check(data):
     elif isinstance(data, dict):
         # Check values whether they are scalars
         if all(isinstance(value, dict) for value in data.values()):
-            if all(
-                    is_list_of_scalar(value.values())
-                    for value in data.values()):
+            if all(is_list_of_scalar(value.values()) for value in data.values()):
                 print("dosd1")
                 return "dosd"
             else:
