@@ -12,10 +12,14 @@ from modules.gui import rungui
 
 # log.dbg("test")
 
+lasttext = " "
+
 # INFO: main entry
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="endgame.py")
-    parser.add_argument("-g", "--gui", action="store_true",
+    parser.add_argument("-g",
+                        "--gui",
+                        action="store_true",
                         help="Activate GUI mode")
     parser.add_argument(
         "-m",
@@ -34,7 +38,9 @@ if __name__ == "__main__":
         choices=["debug", "info", "warning", "error"],
         help="Set logging level",
     )
-    parser.add_argument("-e", "--endpoint", type=str,
+    parser.add_argument("-e",
+                        "--endpoint",
+                        type=str,
                         help="Set endpoint of request")
     parser.add_argument(
         "-p",
@@ -68,9 +74,10 @@ if __name__ == "__main__":
         type=str,
         help="Set username and password",
     )
-    parser.add_argument(
-        "-v", "--view", choices=["json", "yaml"], help="Set view mode json or yaml"
-    )
+    parser.add_argument("-v",
+                        "--view",
+                        choices=["json", "yaml"],
+                        help="Set view mode json or yaml")
     arguments = parser.parse_args()
 
     if len(sys.argv) == 1:
@@ -119,17 +126,16 @@ if __name__ == "__main__":
                     lastten = histitems[-9:]
                     items = dict()
                     if not int(command):
-                        print(
-                            "{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}".format(
-                                "..",
-                                "Method",
-                                "URL",
-                                "Params",
-                                "Request body",
-                                "Request headers",
-                                "status",
-                            )
-                        )
+                        print("{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}".
+                              format(
+                                  "..",
+                                  "Method",
+                                  "URL",
+                                  "Params",
+                                  "Request body",
+                                  "Request headers",
+                                  "status",
+                              ))
 
                         for item in lastten:
                             i = list(item)
@@ -141,10 +147,9 @@ if __name__ == "__main__":
 
                             items[i[0]] = i[1:]
                             print(
-                                "{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}".format(
-                                    i[0], i[1], i[2], i[3], i[4], i[5], i[6]
-                                )
-                            )
+                                "{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}"
+                                .format(i[0], i[1], i[2], i[3], i[4], i[5],
+                                        i[6]))
 
                     command = input(
                         'Enter request index to view full info, "0" to list index , or "q" to quit:'
@@ -158,10 +163,10 @@ if __name__ == "__main__":
                         print("{:<20} {:<100}".format("Method:", items[c][0]))
                         print("{:<20} {:<100}".format("URL:", items[c][1]))
                         print("{:<20} {:<100}".format("Params:", items[c][2]))
-                        print("{:<20} {:<100}".format(
-                            "Request body:", items[c][3]))
-                        print("{:<20} {:<100}".format(
-                            "Request headers:", items[c][4]))
+                        print("{:<20} {:<100}".format("Request body:",
+                                                      items[c][3]))
+                        print("{:<20} {:<100}".format("Request headers:",
+                                                      items[c][4]))
                         print("{:<20} {:<100}".format("Status:", items[c][5]))
                         print("=" * 100)
                         print("---Response--")
@@ -227,8 +232,8 @@ if __name__ == "__main__":
                     pdata = None
                     if arguments.view == "json":
                         try:
-                            pdata = json.dumps(json.loads(
-                                result["text"]), indent=3)
+                            pdata = json.dumps(json.loads(result["text"]),
+                                               indent=3)
                         except:
                             print(
                                 "!!!Recieved data is not possible to parse with json!!!"

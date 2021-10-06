@@ -57,9 +57,10 @@ def tree_add_line(obj, dest, level=0, name=""):
         for item in obj:
             tree_add_line(item, dest, level + 1)
     else:
-        dest.insert(
-            parent=parent_id[level], index="end", iid=line_id, text=str(f"{obj}")
-        )
+        dest.insert(parent=parent_id[level],
+                    index="end",
+                    iid=line_id,
+                    text=str(f"{obj}"))
         line_id += 1
         level -= 1
     return
@@ -73,8 +74,8 @@ def visualize_scalar_list(tree, lst):
         tree.insert(
             "",
             tk.END,
-            values=(index, f'"{value}"' if isinstance(
-                value, str) else str(value)),
+            values=(index,
+                    f'"{value}"' if isinstance(value, str) else str(value)),
         )
     return
 
@@ -87,8 +88,8 @@ def visualize_scalar_dict(tree, vwdata):
         tree.insert(
             "",
             tk.END,
-            values=(key, f'"{value}"' if isinstance(
-                value, str) else str(value)),
+            values=(key,
+                    f'"{value}"' if isinstance(value, str) else str(value)),
         )
     return
 
@@ -112,12 +113,9 @@ def visualize_list_scalar_dicts(tree, vwdata):
         tree.insert(
             "",
             tk.END,
-            values=[str(index)]
-            + [
-                f'"{d.get(key)}"'
-                if isinstance(d.get(key), str)
-                else str(d.get(key, ""))
-                for key in unique_keys
+            values=[str(index)] + [
+                f'"{d.get(key)}"' if isinstance(d.get(key), str) else str(
+                    d.get(key, "")) for key in unique_keys
             ],
         )
     return

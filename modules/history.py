@@ -1,5 +1,6 @@
 import sqlite3
-import modules.logger as log
+if __name__ != '__main__':
+    import modules.logger as log
 
 dbname = "history.db"
 tablename = "history"
@@ -67,13 +68,14 @@ def h_save(**data):
         dresponse = ""
 
     sql = f"""INSERT INTO {tablename} (method,url,params,rbody,rheader,status,response) VALUES(?, ?, ?, ?, ?, ?, ?)"""
-    cursor.execute(sql, (dmethod, durl, dparams, drbody,
-                   drheader, dstatus, dresponse))
+    params = (dmethod, durl, dparams, drbody, drheader, dstatus, dresponse)
+    #print(params)
+    cursor.execute(sql, params)
     db.commit()
     db.close()
 
 
-def h_load(id=None):
+def h_load(columns=False, id=False):
     global dbname
     global tablename
     try:
@@ -82,19 +84,27 @@ def h_load(id=None):
         # log.err(f"Database error: {e}")
         return
     cursor = db.cursor()
-    if id:
+    if isinstance(columns, tuple):
         # select where id =
-        cursor.execute(f"""SELECT FROM {tablename} WHERE id = {id}""")
-        data = cursor.fetchall()
-        db.close()
-        return data
+        query = f'SELECT '
+
+        for item in columns:
+            query += item + ', '
+        query = query[:-2]
+
+        query += f' FROM {tablename}'
+
+        #cursor.execute(f"""SELECT FROM {tablename} WHERE id = {id}""")
 
     else:
         # select all
-        cursor.execute(f"""SELECT * FROM {tablename}""")
-        data = cursor.fetchall()
-        db.close()
-        return data
+        query = f'SELECT * FROM {tablename}'
+
+    if id: query += f' WHERE id = {id}'
+    cursor.execute(query)
+    data = cursor.fetchall()
+    db.close()
+    return data
 
 
 def h_clear():
@@ -110,3 +120,12 @@ def h_clear():
     db.commit()
     db.close()
     h_init()
+
+
+if __name__ == '__main__':
+
+    print(
+        h_load(('id', 'method', 'url', 'params', 'rbody', 'rheader', 'status',
+                'response'), 1))
+
+    print(h_load())

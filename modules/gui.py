@@ -23,7 +23,6 @@ def rungui():
     bd = list()
     hd = list()
 
-    lasttext = ""
     viewer = None
 
     log.dbg("creating a main windows")
@@ -41,8 +40,9 @@ def rungui():
         viewer.grid(column=1, row=0, sticky="nesw")
 
         # add a scrollbar
-        scrollbar = ttk.Scrollbar(
-            tab1, orient=tk.VERTICAL, command=viewer.yview)
+        scrollbar = ttk.Scrollbar(tab1,
+                                  orient=tk.VERTICAL,
+                                  command=viewer.yview)
         viewer.configure(yscroll=scrollbar.set)
         scrollbar.grid(row=0, column=2, sticky="ns")
 
@@ -50,53 +50,71 @@ def rungui():
         global lasttext
         global viewer
         vmode = rvmodevar.get()
+        try:
+            lasttext
+        except:
+            lasttext = ""
 
-        viewer.destroy()
+        #viewer.destroy()
 
         if vmode == 3:
 
-            build_viewer(True)
             # raw json yaml tree/table
             try:
                 data = yaml.safe_load(lasttext)
+                viewer.destroy()
+                build_viewer(True)
                 view(data, check(data), "name", viewer)
             except:
-                tkinter.messagebox.showerror('Treeview error',
-                                             'Unable create tree with recieved data!')
+                tkinter.messagebox.showerror(
+                    'Treeview error', 'Unable create tree with recieved data!')
+                rvmodevar.set(0)
+                viewdata()
+                return
             data = ""
 
         else:
-            build_viewer(False)
             # textmode
-            viewer.config(state=NORMAL)
-            viewer.delete("1.0", tk.END)
-
             if vmode == 0:
                 # raw
                 vdata = pprint.pformat(lasttext, sort_dicts=False)
             elif vmode == 1:
                 # json
                 try:
-                    vdata = pprint.pformat(
-                        json.loads(lasttext), sort_dicts=False)
+                    vdata = pprint.pformat(json.loads(lasttext),
+                                           sort_dicts=False)
                 except:
-                    tkinter.messagebox.showerror('json error',
-                                                 'Unable to parse this data with json!')
+                    tkinter.messagebox.showerror(
+                        'json error', 'Unable to parse this data with json!')
+                    rvmodevar.set(0)
+                    viewdata()
+                    return
+
                     vdata = ""
             elif vmode == 2:
                 # yaml
                 try:
-                    vdata = pprint.pformat(
-                        yaml.safe_load(lasttext), sort_dicts=False)
+                    vdata = pprint.pformat(yaml.safe_load(lasttext),
+                                           sort_dicts=False)
                 except:
-                    tkinter.messagebox.showerror('Yaml error',
-                                                 'Unable to parse this data with YAML!')
-                    vdata = ""
+                    tkinter.messagebox.showerror(
+                        'Yaml error', 'Unable to parse this data with YAML!')
+                    rvmodevar.set(0)
+                    viewdata()
+                    return
+
+            viewer.destroy()
+            build_viewer(False)
+            viewer.config(state=NORMAL)
+            viewer.delete("1.0", tk.END)
             viewer.insert("1.0", vdata)
             viewer.config(state=DISABLED)
 
     def show_history():
-        history = hist.h_load()
+        history = hist.h_load(
+            ('id', 'method', 'url', 'params', 'rbody', 'rheader', 'status'))
+
+        #history = hist.h_load()
         for child in hviewer.get_children():
             hviewer.delete(child)
 
@@ -116,10 +134,9 @@ def rungui():
             item = hviewer.item(selected_item)
             # list
             record = item["values"]
-            lasttext = record[7]
-            viewdata()
-            # TODO: Fill other fields from history
-            tabControl.select(tab1)
+        lasttext = hist.h_load(('response', ), record[0])[0][0]
+        viewdata()
+        tabControl.select(tab1)
         """
         newWindow = tk.Toplevel(root)
         newWindow.title("Data view:")
@@ -185,7 +202,8 @@ def rungui():
             # http response
             if data["status"] == 200:
                 status_bar.configure(
-                    text=f"Got response {data['status']} {HTTPStatus(data['status']).phrase} in {data['rtime']} seconds",
+                    text=
+                    f"Got response {data['status']} {HTTPStatus(data['status']).phrase} in {data['rtime']} seconds",
                     background="green",
                 )
                 lasttext = data["text"]
@@ -195,13 +213,14 @@ def rungui():
                 # viewer.insert('', 0, text=json.dumps(data['text'], indent=3))
             else:
                 status_bar.configure(
-                    text=f"Got response {data['status']} {HTTPStatus(data['status']).phrase} in {data['rtime']} seconds",
+                    text=
+                    f"Got response {data['status']} {HTTPStatus(data['status']).phrase} in {data['rtime']} seconds",
                     background="yellow",
                 )
         else:
             # non http Response
-            status_bar.configure(
-                text=f"Error: {data['status']}", background="RED")
+            status_bar.configure(text=f"Error: {data['status']}",
+                                 background="RED")
 
     def elemenpm(action, src, lst):
         if action:
@@ -259,15 +278,16 @@ def rungui():
     reqshape.columnconfigure((1, 2), weight=10)
     reqshape.columnconfigure(0, weight=1)
 
-    msel = ttk.Combobox(
-        reqshape, values=["get", "post", "put", "patch", "delete"], width=5
-    )
+    msel = ttk.Combobox(reqshape,
+                        values=["get", "post", "put", "patch", "delete"],
+                        width=5)
     msel.grid(row=0, column=0, pady=3, padx=3)
     msel.current(0)
 
     url = tk.Entry(reqshape)
     url.grid(row=0, column=1, sticky="ew")
-    send_button = tk.Button(reqshape, text="Send request",
+    send_button = tk.Button(reqshape,
+                            text="Send request",
                             command=lambda: get_data())
     send_button.grid(row=0, column=2)
 
@@ -285,12 +305,14 @@ def rungui():
 
     pcontrol = tk.Frame(params)
     pcontrol.grid(columnspan=2, row=0, sticky="ew")
-    paramp = tk.Button(
-        pcontrol, text="+", command=lambda: elemenpm(True, params, pr)
-    ).grid(column=0, row=0)
-    paramm = tk.Button(
-        pcontrol, text="-", command=lambda: elemenpm(False, params, pr)
-    ).grid(column=1, row=0)
+    paramp = tk.Button(pcontrol,
+                       text="+",
+                       command=lambda: elemenpm(True, params, pr)).grid(
+                           column=0, row=0)
+    paramm = tk.Button(pcontrol,
+                       text="-",
+                       command=lambda: elemenpm(False, params, pr)).grid(
+                           column=1, row=0)
 
     # param1 = tk.Entry(params).grid(column=0, row=1)
     # param2 = tk.Entry(params).grid(column=1, row=1)
@@ -300,12 +322,14 @@ def rungui():
 
     bcontrol = tk.Frame(body)
     bcontrol.grid(columnspan=2, row=0, sticky="ew")
-    paramp = tk.Button(
-        bcontrol, text="+", command=lambda: elemenpm(True, body, bd)
-    ).grid(column=0, row=0)
-    paramm = tk.Button(
-        bcontrol, text="-", command=lambda: elemenpm(False, body, bd)
-    ).grid(column=1, row=0)
+    paramp = tk.Button(bcontrol,
+                       text="+",
+                       command=lambda: elemenpm(True, body, bd)).grid(column=0,
+                                                                      row=0)
+    paramm = tk.Button(bcontrol,
+                       text="-",
+                       command=lambda: elemenpm(False, body, bd)).grid(
+                           column=1, row=0)
 
     # body1 = tk.Entry(body).grid(column=0, row=1)
     # body2 = tk.Entry(body).grid(column=1, row=1)
@@ -315,12 +339,14 @@ def rungui():
 
     hcontrol = tk.Frame(headers)
     hcontrol.grid(columnspan=2, row=0, sticky="ew")
-    paramp = tk.Button(
-        hcontrol, text="+", command=lambda: elemenpm(True, headers, hd)
-    ).grid(column=0, row=0)
-    paramm = tk.Button(
-        hcontrol, text="-", command=lambda: elemenpm(False, headers, hd)
-    ).grid(column=1, row=0)
+    paramp = tk.Button(hcontrol,
+                       text="+",
+                       command=lambda: elemenpm(True, headers, hd)).grid(
+                           column=0, row=0)
+    paramm = tk.Button(hcontrol,
+                       text="-",
+                       command=lambda: elemenpm(False, headers, hd)).grid(
+                           column=1, row=0)
 
     # headers1 = tk.Entry(headers)
     # headers1.grid(column=0, row=1)
@@ -373,9 +399,11 @@ def rungui():
     rvmodevar = tk.IntVar()
     rvmodevar.set(0)
 
-    rvmode1 = tk.Radiobutton(
-        rvmode, text="RAW", variable=rvmodevar, value=0, command=lambda: viewdata()
-    ).grid(column=0, row=0)
+    rvmode1 = tk.Radiobutton(rvmode,
+                             text="RAW",
+                             variable=rvmodevar,
+                             value=0,
+                             command=lambda: viewdata()).grid(column=0, row=0)
     rvmode2 = tk.Radiobutton(
         rvmode,
         text="Pretty JSON",
@@ -383,9 +411,11 @@ def rungui():
         value=1,
         command=lambda: viewdata(),
     ).grid(column=1, row=0)
-    rvmode3 = tk.Radiobutton(
-        rvmode, text="YAML", variable=rvmodevar, value=2, command=lambda: viewdata()
-    ).grid(column=2, row=0)
+    rvmode3 = tk.Radiobutton(rvmode,
+                             text="YAML",
+                             variable=rvmodevar,
+                             value=2,
+                             command=lambda: viewdata()).grid(column=2, row=0)
     rvmode4 = tk.Radiobutton(
         rvmode,
         text="Treeview/Table",
@@ -400,14 +430,18 @@ def rungui():
     histoperations.columnconfigure(0, weight=0)
     histoperations.rowconfigure(0, weight=0)
 
-    histshow = tk.Button(
-        histoperations, text="Show", command=lambda: show_history()
-    ).grid(column=0, row=0, sticky="w")
-    histclear = tk.Button(
-        histoperations, text="Clear", command=lambda: clear_history()
-    ).grid(column=1, row=0, sticky="w")
+    histshow = tk.Button(histoperations,
+                         text="Show",
+                         command=lambda: show_history()).grid(column=0,
+                                                              row=0,
+                                                              sticky="w")
+    histclear = tk.Button(histoperations,
+                          text="Clear",
+                          command=lambda: clear_history()).grid(column=1,
+                                                                row=0,
+                                                                sticky="w")
 
-    columns = ("#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8")
+    columns = ("#1", "#2", "#3", "#4", "#5", "#6", "#7")
 
     hviewer = ttk.Treeview(tab2, show="headings", columns=columns)
     hviewer.rowconfigure(0, weight=1)
@@ -428,8 +462,6 @@ def rungui():
     hviewer.column("#6", anchor="w")
     hviewer.heading("#7", text="Status")
     hviewer.column("#7", anchor="w", width=40)
-    hviewer.heading("#8", text="")
-    hviewer.column("#8", width=0, stretch="false")
 
     hviewer.bind("<<TreeviewSelect>>", item_selected)
 
@@ -438,8 +470,9 @@ def rungui():
     hviewer.configure(yscroll=hscrollbar.set)
     hscrollbar.grid(row=1, column=1, sticky="ens")
 
-    vscrollbar = ttk.Scrollbar(
-        tab2, orient=tk.HORIZONTAL, command=hviewer.xview)
+    vscrollbar = ttk.Scrollbar(tab2,
+                               orient=tk.HORIZONTAL,
+                               command=hviewer.xview)
     hviewer.configure(xscroll=vscrollbar.set)
     vscrollbar.grid(row=2, column=0, sticky="wes")
 
