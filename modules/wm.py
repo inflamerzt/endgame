@@ -73,7 +73,8 @@ def visualize_scalar_list(tree, lst):
         tree.insert(
             "",
             tk.END,
-            values=(index, f'"{value}"' if isinstance(value, str) else str(value)),
+            values=(index, f'"{value}"' if isinstance(
+                value, str) else str(value)),
         )
     return
 
@@ -86,7 +87,8 @@ def visualize_scalar_dict(tree, vwdata):
         tree.insert(
             "",
             tk.END,
-            values=(key, f'"{value}"' if isinstance(value, str) else str(value)),
+            values=(key, f'"{value}"' if isinstance(
+                value, str) else str(value)),
         )
     return
 

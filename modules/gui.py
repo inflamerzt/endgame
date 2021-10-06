@@ -39,7 +39,8 @@ def rungui():
         viewer.grid(column=1, row=0, sticky="nesw")
 
         # add a scrollbar
-        scrollbar = ttk.Scrollbar(tab1, orient=tk.VERTICAL, command=viewer.yview)
+        scrollbar = ttk.Scrollbar(
+            tab1, orient=tk.VERTICAL, command=viewer.yview)
         viewer.configure(yscroll=scrollbar.set)
         scrollbar.grid(row=0, column=2, sticky="ns")
 
@@ -71,7 +72,8 @@ def rungui():
                 vdata = pprint.pformat(json.loads(lasttext), sort_dicts=False)
             elif vmode == 2:
                 # yaml
-                vdata = pprint.pformat(yaml.safe_load(lasttext), sort_dicts=False)
+                vdata = pprint.pformat(
+                    yaml.safe_load(lasttext), sort_dicts=False)
             viewer.insert("1.0", vdata)
             viewer.config(state=DISABLED)
 
@@ -179,7 +181,8 @@ def rungui():
                 )
         else:
             # non http Response
-            status_bar.configure(text=f"Error: {data['status']}", background="RED")
+            status_bar.configure(
+                text=f"Error: {data['status']}", background="RED")
 
     def elemenpm(action, src, lst):
         if action:
@@ -245,7 +248,8 @@ def rungui():
 
     url = tk.Entry(reqshape)
     url.grid(row=0, column=1, sticky="ew")
-    send_button = tk.Button(reqshape, text="Send request", command=lambda: get_data())
+    send_button = tk.Button(reqshape, text="Send request",
+                            command=lambda: get_data())
     send_button.grid(row=0, column=2)
 
     reqparam = ttk.LabelFrame(reqgroup, text="basic auth")

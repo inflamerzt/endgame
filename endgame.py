@@ -15,7 +15,8 @@ from modules.gui import rungui
 # INFO: main entry
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="endgame.py")
-    parser.add_argument("-g", "--gui", action="store_true", help="Activate GUI mode")
+    parser.add_argument("-g", "--gui", action="store_true",
+                        help="Activate GUI mode")
     parser.add_argument(
         "-m",
         "--method",
@@ -33,7 +34,8 @@ if __name__ == "__main__":
         choices=["debug", "info", "warning", "error"],
         help="Set logging level",
     )
-    parser.add_argument("-e", "--endpoint", type=str, help="Set endpoint of request")
+    parser.add_argument("-e", "--endpoint", type=str,
+                        help="Set endpoint of request")
     parser.add_argument(
         "-p",
         "--params",
@@ -155,7 +157,8 @@ if __name__ == "__main__":
                         print("{:<20} {:<100}".format("Method:", items[c][0]))
                         print("{:<20} {:<100}".format("URL:", items[c][1]))
                         print("{:<20} {:<100}".format("Params:", items[c][2]))
-                        print("{:<20} {:<100}".format("Request body:", items[c][3]))
+                        print("{:<20} {:<100}".format(
+                            "Request body:", items[c][3]))
                         print("{:<20} {:<100}".format("Status:", items[c][4]))
                         print("=" * 100)
                         print("---Response--")
@@ -169,9 +172,11 @@ if __name__ == "__main__":
             # tuple(arguments.auth)
             log.inf("entering console mode...")
             if not arguments.endpoint:
-                parser.error("argument -e/--endpoint is required in console mode.")
+                parser.error(
+                    "argument -e/--endpoint is required in console mode.")
             if not arguments.method:
-                parser.error("argument -m/--method is required in console mode.")
+                parser.error(
+                    "argument -m/--method is required in console mode.")
             if arguments.auth:
                 auth = tuple(arguments.auth)
             else:
@@ -181,7 +186,7 @@ if __name__ == "__main__":
                 headers = dict()
                 for header in arguments.headers:
                     hsplit = header.split("=")
-                    headers[hsplit[0]] = header[len(hsplit[0]) + 1 :]
+                    headers[hsplit[0]] = header[len(hsplit[0]) + 1:]
             else:
                 headers = None
 
@@ -189,7 +194,7 @@ if __name__ == "__main__":
                 params = dict()
                 for param in arguments.params:
                     psplit = param.split("=")
-                    params[psplit[0]] = param[len(psplit[0]) + 1 :]
+                    params[psplit[0]] = param[len(psplit[0]) + 1:]
             else:
                 params = None
 
@@ -197,7 +202,7 @@ if __name__ == "__main__":
                 bodys = dict()
                 for body in arguments.body:
                     bsplit = body.split("=")
-                    bodys[bsplit[0]] = body[len(bsplit[0]) + 1 :]
+                    bodys[bsplit[0]] = body[len(bsplit[0]) + 1:]
             else:
                 bodys = None
 
@@ -221,7 +226,8 @@ if __name__ == "__main__":
                     pdata = None
                     if arguments.view == "json":
                         try:
-                            pdata = json.dumps(json.loads(result["text"]), indent=3)
+                            pdata = json.dumps(json.loads(
+                                result["text"]), indent=3)
                         except:
                             print(
                                 "!!!Recieved data is not possible to parse with json!!!"
