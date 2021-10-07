@@ -1,3 +1,4 @@
+from os import remove
 import tkinter
 import tkinter.messagebox
 from tkinter.constants import DISABLED, NORMAL, NSEW
@@ -5,6 +6,7 @@ import yaml
 import simplejson as json
 import pprint
 import modules.history as hist
+import ast
 
 from modules.data_checker import check
 
@@ -127,6 +129,30 @@ def rungui():
             hviewer.delete(child)
             hist.h_clear()
 
+    def fill_from_history(data, elem, gv):
+        ddict = ast.literal_eval(data)
+        if ddict:
+            q = len(gv) - len(ddict)
+        else:
+            q = len(gv)
+
+        if q != 0:
+            if q < 0: cr = True
+            else: cr = False
+            for i in range(abs(q)):
+                elemenpm(cr, elem, gv)
+        cnt = 0
+        if ddict: dkeys = list(ddict.keys())
+        for item in gv:
+            item[0].delete(0, "end")
+            item[1].delete(0, "end")
+            if ddict:
+                item[0].insert(0, dkeys[cnt])
+                item[1].insert(0, ddict[dkeys[cnt]])
+                cnt += 1
+
+        return
+
     def item_selected(event):
         global lasttext
         for selected_item in hviewer.selection():
@@ -137,6 +163,20 @@ def rungui():
         lasttext = hist.h_load(('response', ), record[0])[0][0]
         viewdata()
         tabControl.select(tab1)
+
+        msel.current(
+            list(["get", "post", "put", "patch",
+                  "delete"]).index(record[1].lower()))
+        url.delete(0, "end")
+        url.insert(0, record[2])
+
+        #elemenpm(True, headers, hd)
+
+        fill_from_history(record[3], params, pr)
+        fill_from_history(record[4], body, bd)
+        fill_from_history(record[5], headers, hd)
+
+        #fillout items
         """
         newWindow = tk.Toplevel(root)
         newWindow.title("Data view:")

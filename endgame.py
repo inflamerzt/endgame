@@ -118,66 +118,68 @@ if __name__ == "__main__":
                 # show history
 
                 #TODO : MySQL history
-                histitems = list(reversed(history.h_load(
-                    0, 0, 10)))  # all columns 10 last items (direct order)
+                histitems = list(
+                    reversed(
+                        history.h_load((
+                            'id',
+                            'method',
+                            'url',
+                            'params',
+                            'rbody',
+                            'rheader',
+                            'status',
+                        ), 0, 10)))  # all columns 10 last items (direct order)
+                print(histitems)
                 command = 0
+                #print("{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}".format(
+                #    str(histitems[0])))
+
                 while True:
-                    # infinite loop
-                    print(
-                        f"There is {len(histitems)} in history, last 10 is displayed:"
-                    )
-                    lastten = histitems[-9:]
-                    items = dict()
-                    if not int(command):
-                        print("{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}".
-                              format(
-                                  "..",
-                                  "Method",
-                                  "URL",
-                                  "Params",
-                                  "Request body",
-                                  "Request headers",
-                                  "status",
-                              ))
 
-                        for item in lastten:
-                            i = list(item)
-                            for num in range(0, len(i)):
-                                if not i[num]:
-                                    i[num] = ""
-                                elif isinstance(i[num], str):
-                                    i[num] = i[num][:25]
+                    if int(command) == 0:
+                        print("{:4} {:8} {:25} {:25} {:25} {:25} {:8}".format(
+                            "..",
+                            "Method",
+                            "URL",
+                            "Params",
+                            "Request body",
+                            "Request headers",
+                            "status",
+                        ))
 
-                            items[i[0]] = i[1:]
+                        for uid, umeth, uurl, uparam, urbod, urhead, urstat in histitems:
                             print(
                                 "{:<4} {:<8} {:<25} {:<25} {:<25} {:<25} {:<8}"
-                                .format(i[0], i[1], i[2], i[3], i[4], i[5],
-                                        i[6]))
+                                .format(uid, umeth, uurl[:24], uparam[:24],
+                                        urbod[:24], urhead[:24], urstat))
 
                     command = input(
                         'Enter request index to view full info, "0" to list index , or "q" to quit:'
                     )
+
                     if command == "q":
                         break
-                    elif int(command) <= len(lastten) and int(command) > 0:
-                        c = int(command)
-
+                    elif int(command) <= len(histitems):
+                        command = int(command)
                         print(f"---Request {command}---")
-                        print("{:<20} {:<100}".format("Method:", items[c][0]))
-                        print("{:<20} {:<100}".format("URL:", items[c][1]))
-                        print("{:<20} {:<100}".format("Params:", items[c][2]))
+                        data = list(history.h_load(False, command)[0])
+                        print("{:<20} {:<100}".format("Method:", data[1]))
+                        print("{:<20} {:<100}".format("URL:", data[2]))
+                        print("{:<20} {:<100}".format("Params:", data[3]))
                         print("{:<20} {:<100}".format("Request body:",
-                                                      items[c][3]))
+                                                      data[4]))
                         print("{:<20} {:<100}".format("Request headers:",
-                                                      items[c][4]))
-                        print("{:<20} {:<100}".format("Status:", items[c][5]))
+                                                      data[5]))
+                        print("{:<20} {:<100}".format(
+                            "Status:",
+                            str(data[6]) + " " + HTTPStatus(data[6]).phrase))
                         print("=" * 100)
                         print("---Response--")
-                        print(items[c][5])
+                        print(data[7])
                         print("---Response body--")
-
                     else:
-                        print("!!!Wrong input!!!")
+                        print("Wrong input try again")
+                    # infinite loop
 
         else:
             # tuple(arguments.auth)
