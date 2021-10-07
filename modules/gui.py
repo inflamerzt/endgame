@@ -247,7 +247,6 @@ def rungui():
                     background="green",
                 )
                 lasttext = data["text"]
-                viewdata()
 
                 # viewer.heading('#0', text="RAW data")
                 # viewer.insert('', 0, text=json.dumps(data['text'], indent=3))
@@ -257,10 +256,14 @@ def rungui():
                     f"Got response {data['status']} {HTTPStatus(data['status']).phrase} in {data['rtime']} seconds",
                     background="yellow",
                 )
+                lasttext = ''
+
         else:
             # non http Response
             status_bar.configure(text=f"Error: {data['status']}",
                                  background="RED")
+            lasttext = ''
+        viewdata()
 
     def elemenpm(action, src, lst):
         if action:

@@ -159,8 +159,15 @@ if __name__ == "__main__":
 
                     if command == "q":
                         break
-                    elif int(command) <= len(histitems):
+                    elif int(command) <= histitems[9][0]:
                         command = int(command)
+                        if command < histitems[0][0]:
+                            if input(
+                                    f"Do you want to display not displayed item {command} from history (y/n): "
+                            ) != 'y':
+                                command = 0
+                                continue
+
                         print(f"---Request {command}---")
                         data = list(history.h_load(False, command)[0])
                         print("{:<20} {:<100}".format("Method:", data[1]))
