@@ -127,8 +127,9 @@ def request(url, **params):
             hist.h_save(
                 method=method.upper(),
                 url=url,
-                params=rparams,
-                rbody=rdata,
+                params=str(rparams),
+                rbody=str(rdata),
+                rheader=str(rheaders),
                 status=response.status_code,
             )
             rtime = round(response.elapsed.total_seconds(), 2)
